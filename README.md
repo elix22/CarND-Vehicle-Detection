@@ -22,10 +22,8 @@ run `python detect-vehicles.py`
 I used [Histogram of Oriented Gradients (HOG)](./https://en.wikipedia.org/wiki/Histogram_of_oriented_gradients) to extract features from images. The code is located in the function `single_img_features()` in file `utils.py`. Although this function supports also spatial and histogram features extraction I did not use those two in this project due to lower effectivity. 
 The training data is a set of images with the size (64, 64) divided into car images and non-car images which allows easy labels generation. The code responsible for training the classifier is located in function `train()` in file `train.py`. It supports two modes of operation - reading individual images files or reading the data from archive file. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 ![alt text][image1]
-
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  To find the best combination of parameters I ran training and detection on one image for several combinations of those parameters and vizualized the boxes detected in each case as a car as can be seen in the following figure.
 ![alt text][image2]
-
 After some trial and error I chose `orientations = 32` and `pixels_per_cell = 16` as a balance between the desire to have better separation between classes and thus lower amount of false positives and the fact that increasing the orientations parameter dramatically reduces processing speed.
 
 ##Training
@@ -42,7 +40,6 @@ There are two modes of vehicle search in the image, located in function `process
 	* Zoom out - searches in 10 increasingly bigger windows (each step adds 10% in each side) for each car region detected in previous frame.
 The following figure provides an example of boxes detected by the full and focus searches:
 ![alt text][image3]
-
 ##Heatmap
 Each window from the images above is passed through the SVM classifier in function `search_windows()` from the file `utils.py`. The function returns list of windows that the classifier predicted being a car. In this stage there are many false positives among those predictions and to cope with that the predictions from up to 5 frames back is converted to a heatmap. Heatmap generation is done by adding 1 to each pixel location that is inside a window, for each window detected as car and for up to 5 frames back. With this scheme hotter areas are created by overlapping windows whereas false positives don't overlap as much as real detections (hopefully).
 One of the problems that surfaced from time to time is parts of a car object being "hot" - recognized as a car but other parts are not. It created islands of hot areas on the same car (when the car object is big) that were later mistaken for 2 or 3 different cars. To solve this problem I used smoothing algorithm implemented in `scipy.ndimage.morphology.grey_opening()` function in `scipy` library. This function is called after each frame's windows are added to the heatmap and effectively mitigates the effects of hot islands. Here is an example of an image from project video with the heatmap overlaid on it:
@@ -52,10 +49,8 @@ I also experimened with "weighted" heatmap attribution, when each pixel contribu
 ##Labeling (aka Object Detection)
 Given the heatmap generated from several frames, I then separate the false positives from the real cars by applying a threshold to the heatmap, regecting all pixels that are below the average of non-zero heatmap areas in function `process_image()`. The thresholded heatmap is then passed to `scipy.ndimage.measurements.label()` function that groups close pixels together and assignes them a label such as that each label represents another detected car. The final stage is to find the surrounding box for each label, which is done in function `labels_to_boxes()` in `detect-vehicles.py` by finding the max and min x and y coordinates over all the pixels with the same label. Here is the result produced by this method:
 ![alt text][image5]
-
 ## Video Implementation
 Here's a [link to my video result](./https://youtu.be/fxCiw3U5pzE)
-![alt text][video1]
 
 ##False Positives
 There are three main directions I used for false positives rejection. 
