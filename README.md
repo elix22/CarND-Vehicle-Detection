@@ -1,4 +1,4 @@
-**Vehicle Detection Project**
+#**Vehicle Detection Project**
 
 [//]: # (Image References)
 [image1]: ./examples/car_not_car.png
@@ -54,7 +54,7 @@ Given the heatmap generated from several frames, I then separate the false posit
 ![alt text][image5]
 
 ## Video Implementation
-Here's a [link to my video result](./output.avi)
+Here's a [link to my video result](./https://youtu.be/fxCiw3U5pzE)
 ![alt text][video1]
 
 ##False Positives
