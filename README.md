@@ -19,7 +19,7 @@
 run `python detect-vehicles.py`
 
 ##Feature Extraction
-I used [Histogram of Oriented Gradients (HOG)](./https://en.wikipedia.org/wiki/Histogram_of_oriented_gradients) to extract features from images. The code is located in the function `single_img_features()` in file `utils.py`. Although this function supports also spatial and histogram features extraction I did not use those two in this project due to lower effectivity. 
+I used [Histogram of Oriented Gradients (HOG)](https://en.wikipedia.org/wiki/Histogram_of_oriented_gradients) to extract features from images. The code is located in the function `single_img_features()` in file `utils.py`. Although this function supports also spatial and histogram features extraction I did not use those two in this project due to lower effectivity. 
 The training data is a set of images with the size (64, 64) divided into car images and non-car images which allows easy labels generation. The code responsible for training the classifier is located in function `train()` in file `train.py`. It supports two modes of operation - reading individual images files or reading the data from archive file. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 ![alt text][image1]
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  To find the best combination of parameters I ran training and detection on one image for several combinations of those parameters and vizualized the boxes detected in each case as a car as can be seen in the following figure.
@@ -50,7 +50,7 @@ I also experimened with "weighted" heatmap attribution, when each pixel contribu
 Given the heatmap generated from several frames, I then separate the false positives from the real cars by applying a threshold to the heatmap, regecting all pixels that are below the average of non-zero heatmap areas in function `process_image()`. The thresholded heatmap is then passed to `scipy.ndimage.measurements.label()` function that groups close pixels together and assignes them a label such as that each label represents another detected car. The final stage is to find the surrounding box for each label, which is done in function `labels_to_boxes()` in `detect-vehicles.py` by finding the max and min x and y coordinates over all the pixels with the same label. Here is the result produced by this method:
 ![alt text][image5]
 ## Video Implementation
-Here's a [link to my video result](./https://youtu.be/fxCiw3U5pzE)
+Here's a [link to my video result](https://youtu.be/fxCiw3U5pzE).
 
 ##False Positives
 There are three main directions I used for false positives rejection. 
